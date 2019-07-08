@@ -12,7 +12,7 @@ class Connection
 		$paths = array(__DIR__. '/Entities');
 		$isDevMode = false;
 
-		$databaseCredentials = json_decode(file_get_contents(__DIR__ . "/../../../config/database.json"), true);
+		$databaseCredentials = json_decode(file_get_contents(__DIR__ . "/../../config/database.json"), true);
 
 		// the connection configuration
 		$dbParams = array(
