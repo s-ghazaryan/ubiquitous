@@ -9,7 +9,8 @@ namespace App\Database\Entities;
 class Category
 {
 	/**
-	 * @Id @Column(type="integer", unique=true) @GeneratedValue
+	 * @Id @Column(type="integer") @GeneratedValue(strategy="IDENTITY")
+	 * @SequenceGenerator(sequenceName="id")
 	 * @var int
 	 */
 	private $id;
@@ -22,7 +23,7 @@ class Category
 
 	/**
      * Many Categories have Many Articles.
-     * @ManyToMany(targetEntity="Article", inversedBy="categories")
+     * @ManyToMany(targetEntity="Article", mappedBy="categories")
      */
 	private $articles;
 
@@ -41,8 +42,19 @@ class Category
 		$this->name = $name;
 	}
 
-	public function getArticles(): array
+	public function getArticles()
 	{
 		return $this->articles;
+	}
+
+	public function addArticle(Article $article): void
+	{
+		if ($this->articles->contains($article)){
+	        // Do nothing if its already part of our collection
+	        return;
+    	}
+
+		$this->articles->add($article);
+		$article->addCategory($this);
 	}
 }

@@ -9,7 +9,8 @@ namespace App\Database\Entities;
 class Article
 {
 	/**
-	 * @Id @Column(type="integer", unique=true) @GeneratedValue
+	 * @Id @Column(type="integer", unique=true) @GeneratedValue(strategy="IDENTITY")
+	 * @SequenceGenerator(sequenceName="id")
 	 * @var int
 	 */
 	private $id;
@@ -58,8 +59,19 @@ class Article
 		$this->content = $content;
 	}
 
-	public function getCategories(): array
+	public function getCategories()
 	{
 		return $this->categories;
+	}
+
+	public function addCategory(Category $category): void
+	{
+		if ($this->categories->contains($category)){
+	        // Do nothing if its already part of our collection
+	        return;
+    	}
+
+		$this->categories->add($category);
+		$category->addArticle($this);
 	}
 }
