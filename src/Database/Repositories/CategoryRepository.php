@@ -7,25 +7,18 @@ use App\Services\Api\Json\JsonApiRequestGuru;
 
 class CategoryRepository extends EntityRepository
 {
+	use RepositoryTrait;
+
 	public function findCategories(JsonApiRequestGuru $jsonApiRequestGuru)
 	{
-		$qb = $this->createQueryBuilder('c');
-
+		$aliace = 'c';
+		$qb = $this->createQueryBuilder($aliace);
 		// Sorting categories
-		$sortParams = $jsonApiRequestGuru->prepareSortParams();
-		foreach ($sortParams as $sortParam => $sortOrder) {
-			if ($sortOrder) {
-				$sortOrder = 'ASC';
-			} else {
-				$sortOrder = 'DESC';
-			}
-
-			$qb->orderBy($sortParam, $sortOrder);
-		}
-
-		$qb->getQuery;
+		$this->addOrderFields($jsonApiRequestGuru, $qb, $aliace);
+		// Pagination
+		$this->paginate($jsonApiRequestGuru, $qb);	
 		
-		return $qb->execute();
-
+		return $qb->getQuery()
+				->getResult();
 	}
 }
