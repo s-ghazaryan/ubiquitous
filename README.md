@@ -60,3 +60,9 @@ As above annotation states they are connected with **associative** table!
 
 ### What can be wrong and why ?
 Some functionalities can have errors, because of tight shchedule (regarding work) - SORRY in advance!
+
+* Only 200 status code will be returned.
+* Even single object placeholder (e.g. /categories/{id} - 
+	if not integer then error will be thrown) is not validated for integer.
+* Resource will have empty arrays for not used members json:api (v1.0).
+* etc.
