@@ -5,7 +5,7 @@ namespace App\Services\ModelResourceMapping;
 use App\Services\Api\Json\Resource;
 use App\Services\Api\Json\JsonApiRequestGuru;
 
-interface MappingInterface
+interface MapperInterface
 {
 	/**
 	 * Checks to see whether to use this class or not 
