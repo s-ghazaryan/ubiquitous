@@ -8,6 +8,13 @@ namespace App\Database\Entities;
  */
 class Category
 {
+	const ID = 'id';
+	const TITLE = 'name';
+
+	private $relationshipsGetters = [
+		"articles" => "getArticles"
+	];
+
 	/**
 	 * @Id @Column(type="integer") @GeneratedValue(strategy="IDENTITY")
 	 * @SequenceGenerator(sequenceName="id")
@@ -29,7 +36,7 @@ class Category
 
 	public function getId(): ?int
 	{
-		return $id;
+		return $this->id;
 	}
 
 	public function getName(): string
@@ -56,5 +63,27 @@ class Category
 
 		$this->articles->add($article);
 		$article->addCategory($this);
+	}
+
+	public function getConstants(): array
+	{
+		$reflection = new \ReflectionClass(self::class);
+		return $reflection->getConstants();
+	}
+
+	public function getTypeForJsonApi()
+	{
+		// TODO: Define parent and get this data by EntityManager
+		return 'categories';
+	}
+
+	public function getRelationshipsGetters(): array
+	{
+		return $this->relationshipsGetters;
+	}
+
+	public function getSelf()
+	{
+		return self::class;
 	}
 }

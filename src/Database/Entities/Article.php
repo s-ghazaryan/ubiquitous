@@ -3,11 +3,19 @@
 namespace App\Database\Entities;
 
 /**
- * @Entity
+ * @Entity(repositoryClass="App\Database\Repositories\ArticleRepository")
  * @Table(name="articles")
  */
 class Article
 {
+	const ID = 'id';
+	const TITLE = 'title';
+	const CONTENT = 'content';
+
+	private $relationshipsGetters = [
+		"categories" => "getCategories"
+	];
+
 	/**
 	 * @Id @Column(type="integer", unique=true) @GeneratedValue(strategy="IDENTITY")
 	 * @SequenceGenerator(sequenceName="id")
@@ -73,5 +81,27 @@ class Article
 
 		$this->categories->add($category);
 		$category->addArticle($this);
+	}
+
+	public function getConstants(): array
+	{
+		$reflection = new \ReflectionClass(self::class);
+		return $reflection->getConstants();
+	}
+
+	public function getTypeForJsonApi()
+	{
+		// TODO: Define parent and get this data by EntityManager
+		return 'articles';
+	}
+
+	public function getRelationshipsGetters(): array
+	{
+		return $this->relationshipsGetters;
+	}
+
+	public function getSelf()
+	{
+		return self::class;
 	}
 }
