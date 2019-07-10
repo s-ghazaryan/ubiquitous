@@ -4,28 +4,28 @@ namespace App\Controllers;
 
 use Symfony\Component\HttpFoundation;
 use App\Database\Connection;
-use App\Database\Entities\Category;
+use App\Database\Entities\Article;
 use App\Services\Api\Json\JsonApiRequestGuru;
 use App\Services\Api\Json\Resource;
 use App\Services\Factory\Factory;
 use App\Services\ModelResourceMapping\MapperCollection;
 
-class CategoryController
+class ArticleController
 {
-	public function getCategories(HttpFoundation\Request $request, array $placeholders)
+	public function getArticles(HttpFoundation\Request $request, array $placeholders)
 	{
 		$jsonApiRequestGuru = new JsonApiRequestGuru($request);
 
 		$entityManager = Connection::getEntityManager();
-		$categoryRepo = $entityManager->getRepository(Category::class);
-		$categories = $categoryRepo->findCategories($jsonApiRequestGuru);
+		$articleRepo = $entityManager->getRepository(Article::class);
+		$articles = $articleRepo->findArticles($jsonApiRequestGuru);
 
 		$factory = new Factory();
-		$mapper = $factory->create($categories, MapperCollection::getConstants());
+		$mapper = $factory->create($articles, MapperCollection::getConstants());
 
 		$resource = new Resource();
 		if ($mapper) {
-			$resource = $mapper->populateResource($categories, $jsonApiRequestGuru);
+			$resource = $mapper->populateResource($articles, $jsonApiRequestGuru);
 		}
 
 		$response = new HttpFoundation\Response();
