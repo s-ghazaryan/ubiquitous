@@ -12,9 +12,14 @@ class JsonApiRequestGuru
 	const PAGE_SIZE = 'size';
 	const PAGE_NUMBER = 'number';
 
-	const INCLUDE_PARAM = 'inlcude';
+	const INCLUDED_PARAM = 'included';
 	const SORT_PARAM = 'sort';
 	const FIELDS_PARAM ='fields';
+
+	/**
+	 * @var Request
+	 */
+	private $request; 
 
 	/**
 	 * @var array|null
@@ -24,7 +29,7 @@ class JsonApiRequestGuru
 	/**
 	 * @var string|null
 	 */
-	private $includeParams = null;
+	private $includedParams = null;
 
 	/**
 	 * @var string|null
@@ -38,9 +43,11 @@ class JsonApiRequestGuru
 
 	public function __construct(?HttpFoundation\Request $request = null)
 	{
+		$this->request = $request;
+
 		if ($request) {
 			$this->populateParams($request, self::PAGE_PARAM);
-			$this->populateParams($request, self::INCLUDE_PARAM);
+			$this->populateParams($request, self::INCLUDED_PARAM);
 			$this->populateParams($request, self::SORT_PARAM);
 			$this->populateParams($request, self::FIELDS_PARAM);
 		}
@@ -57,6 +64,11 @@ class JsonApiRequestGuru
 		return $queryParamKey. 'Params';
 	}
 
+	public function getRequest(): HttpFoundation\Request
+	{
+		return $this->request;
+	}
+
 	public function getPageParams(): ?array
 	{
 		return $this->pageParams;
@@ -69,12 +81,12 @@ class JsonApiRequestGuru
 
 	public function getIncludeParams(): ?string
 	{
-		return $this->includeParams;
+		return $this->includedParams;
 	}
 
-	public function setIncludeParams(?string $includeParams): void
+	public function setIncludeParams(?string $includedParams): void
 	{
-		$this->includeParams = $includeParams;
+		$this->includedParams = $includedParams;
 	}
 
 	public function getSortParams(): ?string
@@ -117,6 +129,10 @@ class JsonApiRequestGuru
 
 	public function prepareSortParams(): array
 	{
+		if (!$this->sortParams) {
+			return [];
+		}
+
 		$sortParams = explode(',', $this->sortParams);
 		$preparedSortParamsToReturn = [];
 
@@ -125,10 +141,19 @@ class JsonApiRequestGuru
 			if ($sortParam[0] === '-') {
 				$preparedSortParamsToReturn[substr($sortParam, 1)] = false;
 			} else {
-				$preparedSortParamsToReturn[substr($sortParam, 1)] = true;
+				$preparedSortParamsToReturn[$sortParam] = true;
 			}
 		}
 
 		return $preparedSortParamsToReturn;
+	}
+
+	public function prepareIncludeParams(): array
+	{
+		if (!$this->includedParams) {
+			return [];
+		}
+
+		return explode(',', $this->includedParams);
 	}
 }
