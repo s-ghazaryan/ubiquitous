@@ -1,0 +1,12 @@
+{
+	"in_use" : "connection_1_psql",
+
+	"connection_1_psql" : {
+		"driver"   : "pdo_pgsql",
+		"host"	   : "localhost",
+		"port"     : 5432,
+		"dbname"   : "your database name here",
+		"user"     : "user name here",
+		"password" : "your password here"
+	}
+}

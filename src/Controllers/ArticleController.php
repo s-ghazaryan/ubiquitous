@@ -35,5 +35,30 @@ class ArticleController
 		$response->headers->set('Content-Type', 'application/vnd.api+json');
 
 		return $response;
-	}	
+	}
+
+	public function getArticle(HttpFoundation\Request $request, array $placeholders)
+	{
+		$jsonApiRequestGuru = new JsonApiRequestGuru($request);
+
+		$entityManager = Connection::getEntityManager();
+		$articleRepo = $entityManager->getRepository(Article::class);
+		$article = $articleRepo->find($placeholders['id']);
+
+		$factory = new Factory();
+		$mapper = $factory->create($article, MapperCollection::getConstants());
+
+		$resource = new Resource();
+		if ($mapper) {
+			$resource = $mapper->populateResource($article, $jsonApiRequestGuru);
+		}
+
+		$response = new HttpFoundation\Response();
+		$response->setContent(json_encode($resource->assemble()));
+		// TODO: based on returned resource status code need to be defined!
+		$response->setStatusCode(200);
+		$response->headers->set('Content-Type', 'application/vnd.api+json');
+
+		return $response;
+	}
 }

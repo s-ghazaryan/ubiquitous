@@ -19,7 +19,9 @@ class RoutingMiddleware implements MiddlewareInterface
 	{
 		$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 		    $r->addRoute('GET', '/categories', ['CategoryController', 'getCategories']);
+		    $r->addRoute('GET', '/categories/{id}', ['CategoryController', 'getCategory']);
 		    $r->addRoute('GET', '/articles', ['ArticleController', 'getArticles']);
+		    $r->addRoute('GET', '/articles/{id}', ['ArticleController', 'getArticle']);
 		});
 
 		$httpMethod = $request->getMethod();

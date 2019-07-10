@@ -35,5 +35,30 @@ class CategoryController
 		$response->headers->set('Content-Type', 'application/vnd.api+json');
 
 		return $response;
-	}	
+	}
+
+	public function getCategory(HttpFoundation\Request $request, array $placeholders)
+	{
+		$jsonApiRequestGuru = new JsonApiRequestGuru($request);
+
+		$entityManager = Connection::getEntityManager();
+		$categoryRepo = $entityManager->getRepository(Category::class);
+		$category = $categoryRepo->find($placeholders['id']);
+
+		$factory = new Factory();
+		$mapper = $factory->create($category, MapperCollection::getConstants());
+
+		$resource = new Resource();
+		if ($mapper) {
+			$resource = $mapper->populateResource($category, $jsonApiRequestGuru);
+		}
+
+		$response = new HttpFoundation\Response();
+		$response->setContent(json_encode($resource->assemble()));
+		// TODO: based on returned resource status code need to be defined!
+		$response->setStatusCode(200);
+		$response->headers->set('Content-Type', 'application/vnd.api+json');
+
+		return $response;
+	}
 }

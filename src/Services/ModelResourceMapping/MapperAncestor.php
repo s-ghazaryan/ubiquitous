@@ -28,7 +28,7 @@ class MapperAncestor implements MapperInterface
 					return true;
 				}
 			}
-		} elseif ($object instanceof $this->entityNamespace) {
+		} elseif ($comparable instanceof $this->entityNamespace) {
 			return true;
 		}
 
@@ -55,6 +55,15 @@ class MapperAncestor implements MapperInterface
 
 				$resource->addResource($singleResource);
 			}
+		} else {
+			$singleResource = new Resource();
+
+			$this->populateIdAndType($objectToExtractMappingDataFrom, $singleResource);
+			$this->populateAttributes($objectToExtractMappingDataFrom, $singleResource, $jsonApiRequestGuru);
+			$this->populateRelationships($objectToExtractMappingDataFrom, $singleResource);
+			$this->populateIncluded($objectToExtractMappingDataFrom, $resource, $jsonApiRequestGuru);
+
+			$resource->addResource($singleResource);
 		}
 
 		return $resource;
