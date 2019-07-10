@@ -5,7 +5,7 @@
 composer install
 ```
 
-2) Fill you database credentials in config/database.json file.
+2) Fill your database credentials in config/database.json file.
 
 ```json
 {
@@ -45,7 +45,7 @@ vendor/bin/doctrine orm:schema-tool:create
 As above annotation states they are connected with **associative** table!
 
 ### What is this api offering so far ?
-[JSON:API](https://jsonapi.org/format/) **GET** functionality.
+[JSON:API](https://jsonapi.org/format/) **GET** functionalities.
 
 * [Pagination](https://jsonapi.org/format/#fetching-pagination) with collections (obviously)
 * [Compound Document](https://jsonapi.org/format/#fetching-includes)
