@@ -46,12 +46,12 @@ class Resource
 	/**
 	 * @var ParameterBag
 	 */
-	private $attributes = [];
+	private $attributes;
 
 	/**
 	 * @var ParameterBag
 	 */
-	private $relationships = [];
+	private $relationships;
 
 	/**
 	 * Root level member
@@ -63,10 +63,10 @@ class Resource
 	/**
 	 * @var ParameterBag
 	 */
-	private $links = [];
+	private $links;
 
 	/**
-	 * @var array
+	 * @var Resource[]
 	 */
 	private $included = [];
 
@@ -75,7 +75,7 @@ class Resource
 	 *
 	 * @var ParameterBag
 	 */
-	private $meta = [];
+	private $meta;
 
 	/**
 	 * Reversing this object to array, which obays json:api (v1.0) specification.
@@ -106,6 +106,12 @@ class Resource
 			} else {
 				$this->populateProperties($resourceData, $this->dataKeyIsAbsent);	
 			}
+		} else {
+			$this->attributes = new ParameterBag();
+			$this->relationships = new ParameterBag();
+			$this->primaryDataLinks = new ParameterBag();
+			$this->links = new ParameterBag();
+			$this->meta = new ParameterBag();
 		}
 	}
 
@@ -239,6 +245,15 @@ class Resource
 		$this->resources = $resources;
 	}
 
+	public function addResource(self $resource): void
+	{
+		if (!($resource instanceof Resource)) {
+			throw new \InvalidArgumentException('given array isn\'t of type ' .self::class. "!");
+		}
+
+		$this->resources[] = $resource;
+	}
+
 	public function getAttributes(): ParameterBag
 	{
 		return $this->attributes;
@@ -289,6 +304,11 @@ class Resource
 		foreach ($included as $includedObject) {
 			$this->included[] = new self($includedObject, true);
 		}
+	}
+
+	public function addToIncluded(self $resource): void
+	{
+		$this->included[] = $resource;
 	}
 
 	public function getMeta(): ParameterBag
@@ -374,9 +394,9 @@ class Resource
 		if (empty($this->resources)) {
 			$this->resourceInJsonApiFormat[self::DATA][self::ID] = $this->id;
 			$this->resourceInJsonApiFormat[self::DATA][self::TYPE] = $this->type;
-			$this->resourceInJsonApiFormat[self::DATA][self::ATTRIBUTES] = $this->attributes;
-			$this->resourceInJsonApiFormat[self::DATA][self::RELATIONSHIPS] = $this->relationships;
-			$this->resourceInJsonApiFormat[self::DATA][self::LINKS] = $this->links;
+			$this->resourceInJsonApiFormat[self::DATA][self::ATTRIBUTES] = $this->attributes->all();
+			$this->resourceInJsonApiFormat[self::DATA][self::RELATIONSHIPS] = $this->relationships->all();
+			$this->resourceInJsonApiFormat[self::DATA][self::LINKS] = $this->links->all();
 		} else {
 			$this->addMultipleResources($this->resources, self::DATA);
 		}
@@ -397,9 +417,9 @@ class Resource
 		foreach ($resources as $index => $resource) {
 			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::ID] = $resource->id;
 			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::TYPE] = $resource->type;
-			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::ATTRIBUTES] = $resource->attributes;
-			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::RELATIONSHIPS] = $resource->relationships;
-			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::LINKS] = $resource->links;
+			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::ATTRIBUTES] = $resource->attributes->all();
+			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::RELATIONSHIPS] = $resource->relationships->all();
+			$this->resourceInJsonApiFormat[$memeberToAddTo][$index][self::LINKS] = $resource->links->all();
 		}
 	}
 }
